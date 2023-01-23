@@ -1,0 +1,11 @@
+FROM osrf/ros:noetic-desktop-full
+
+RUN sudo apt-get update && apt-get install -y \
+    vim \
+    git \
+    tmux \
+    ros-noetic-gazebo-ros
+
+SHELL [ "/bin/bash", "-c" ]
+
+ENTRYPOINT [ "/ros_entrypoint.sh" ]

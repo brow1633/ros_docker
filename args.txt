@@ -1,0 +1,1 @@
+--net=host -e DISPLAY --volume=/home/ethan/.Xauthority:/root/.Xauthority:rw

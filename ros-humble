@@ -1,0 +1,14 @@
+FROM osrf/ros:humble-desktop-full
+
+RUN sudo apt-get update && apt-get install -y \
+    vim \
+    tmux \
+    git \
+    ros-humble-gazebo-ros \
+    ros-humble-rmw-cyclonedds-cpp
+
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+SHELL [ "/bin/bash", "-c" ]
+
+ENTRYPOINT [ "/ros_entrypoint.sh" ]

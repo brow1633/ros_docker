@@ -1,5 +1,5 @@
 DOCKER_VOLUMES = \
-	--volume="${HOME}/Nextcloud/research/ROS_Docker/ws/":"/ws":rw \
+	--volume="${HOME}/research_ws":"/ws":rw \
 	--volume="${HOME}/catkin_ws":"/catkin_ws":rw
 
 DOCKER_X11_LOCAL = \

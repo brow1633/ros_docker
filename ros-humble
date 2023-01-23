@@ -5,7 +5,11 @@ RUN sudo apt-get update && apt-get install -y \
     tmux \
     git \
     ros-humble-gazebo-ros \
-    ros-humble-rmw-cyclonedds-cpp
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-diagnostic-updater \
+    ros-humble-ros2-control \
+    ros-humble-ros2-controllers \
+    ros-humble-joint-state-broadcaster
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 

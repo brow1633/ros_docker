@@ -51,6 +51,8 @@ RUN sudo apt-get update && apt-get install -y \
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
+SHELL [ "/bin/bash", "-c" ]
+
 RUN echo $' \n\
 colcon() { \n\
     case $1 in \n\
@@ -66,6 +68,5 @@ colcon() { \n\
 
 RUN cp /opt/ros/humble/lib/controller_manager/spawner /opt/ros/humble/lib/controller_manager/spawner.py
 
-SHELL [ "/bin/bash", "-c" ]
 
 ENTRYPOINT [ "/ros_entrypoint.sh" ]

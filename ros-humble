@@ -2,16 +2,27 @@ FROM osrf/ros:humble-desktop-full
 
 RUN sudo apt-get update && apt-get install -y \
     vim \
+    nano \
     tmux \
     git \
-    ros-humble-gazebo-ros \
-    ros-humble-rmw-cyclonedds-cpp \
-    ros-humble-diagnostic-updater \
+    python3-pip \
+    python3-pydantic \
+    ros-humble-joint-state-publisher \
+    ros-humble-robot-state-publisher \
+    ros-humble-plotjuggler-ros \
     ros-humble-ros2-control \
+    ros-humble-diagnostic-updater \
+    ros-humble-diff-drive-controller \
     ros-humble-ros2-controllers \
-    ros-humble-joint-state-broadcaster
+    ros-humble-librealsense2 \
+    ros-humble-rqt-image-view \
+    ros-humble-demo-nodes-cpp \
+    ros-humble-topic-tools \
+    ros-humble-joy-linux
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+RUN cp /opt/ros/humble/lib/controller_manager/spawner /opt/ros/humble/lib/controller_manager/spawner.py
 
 SHELL [ "/bin/bash", "-c" ]
 

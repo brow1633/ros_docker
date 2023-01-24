@@ -51,6 +51,19 @@ RUN sudo apt-get update && apt-get install -y \
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
+RUN echo $' \n\
+colcon() { \n\
+    case $1 in \n\
+      build) \n\
+        shift \n\
+        command colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \n\
+        ln -s build/compile_commands.json ./compile_commands.json \n\
+        ;; \n\
+      *) \n\
+        command colcon "$@";; \n\
+    esac \n\
+}' >> /root/.bashrc
+
 RUN cp /opt/ros/humble/lib/controller_manager/spawner /opt/ros/humble/lib/controller_manager/spawner.py
 
 SHELL [ "/bin/bash", "-c" ]

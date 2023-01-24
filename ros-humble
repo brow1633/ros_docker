@@ -26,4 +26,18 @@ RUN cp /opt/ros/humble/lib/controller_manager/spawner /opt/ros/humble/lib/contro
 
 SHELL [ "/bin/bash", "-c" ]
 
+RUN echo $' \n\
+colcon() { \n\
+    case $1 in \n\
+      build) \n\
+        shift \n\
+        command colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \n\
+        ln -s build/compile_commands.json ./compile_commands.json \n\
+        ;; \n\
+      *) \n\
+        command colcon "$@";; \n\
+    esac \n\
+}' >> /root/.bashrc
+
+
 ENTRYPOINT [ "/ros_entrypoint.sh" ]

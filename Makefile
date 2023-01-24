@@ -59,7 +59,7 @@ humble_remote:
 
 .PHONY: jetson
 jetson:
-	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} ros-humble bash --gpus=all
+	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --gpus=all ros-humble bash
 
 .PHONY: perms
 perms:

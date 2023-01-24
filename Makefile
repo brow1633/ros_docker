@@ -1,5 +1,5 @@
 DOCKER_VOLUMES = \
-	--volume="${HOME}/research_ws":"/ws":rw \
+	--volume="${HOME}/oscar_ros_ws":"/ws":rw \
 	--volume="${HOME}/catkin_ws":"/catkin_ws":rw
 
 DOCKER_X11_LOCAL = \
@@ -15,9 +15,11 @@ DOCKER_ENV_VARS = \
 DOCKER_ENV_VARS_LOCAL = \
 	--env="QT_X11_NO_MITSHM=1"
 
-DOCKER_ARGS_LOCAL = ${DOCKER_VOLUMES} ${DOCKER_X11_LOCAL} ${DOCKER_ENV_VARS} ${DOCKER_ENV_VARS_LOCAL} --privileged --rm
+DOCKER_ARGS = ${DOCKER_VOLUMES} ${DOCKER_ENV_VARS} -it --net=host --pid=host --privileged --rm
 
-DOCKER_ARGS_REMOTE = ${DOCKER_VOLUMES} ${DOCKER_X11_REMOTE} ${DOCKER_ENV_VARS} --rm
+DOCKER_ARGS_LOCAL =  ${DOCKER_ARGS} ${DOCKER_X11_LOCAL} ${DOCKER_ENV_VARS_LOCAL}
+
+DOCKER_ARGS_REMOTE = ${DOCKER_ARGS} ${DOCKER_X11_REMOTE}
 
 .PHONY: build-noetic
 build-noetic:
@@ -27,25 +29,29 @@ build-noetic:
 build-humble:
 	@docker build -f ${PWD}/ros-humble -t ros-humble .
 
+.PHONY: build-humble-jetson
+build-humble-jetson:
+	@docker build -f ${PWD}/ros-humble-jetson -t ros-humble
+
 .PHONY: build
 build: build-humble build-noetic
 
 .PHONY: noetic
 noetic:
-	@docker run -it --net=host \
-		${DOCKER_ARGS_LOCAL} ros-noetic bash
+	@docker run ${DOCKER_ARGS_LOCAL} ros-noetic bash
 
 .PHONY: humble
 humble:
-	@docker run -it --net=host \
-		${DOCKER_ARGS_LOCAL} ros-humble bash
+	@docker run ${DOCKER_ARGS_LOCAL} ros-humble bash
 
 .PHONY: noetic_remote
 noetic_remote:
-	@docker run -it --net=host \
-		${DOCKER_ARGS_REMOTE} ros-noetic bash
+	@docker run ${DOCKER_ARGS_REMOTE} ros-noetic bash
 
 .PHONY: humble_remote
 humble_remote:
-	@docker run -it --net=host \
-		${DOCKER_ARGS_REMOTE} ros-humble bash
+	@docker run ${DOCKER_ARGS_REMOTE} ros-humble bash
+
+.PHONY: jetson
+jetson:
+	@docker run ${DOCKER_ARGS_LOCAL} ros-humble bash --gpus=all

@@ -5,6 +5,7 @@ RUN sudo apt-get update && apt-get install -y \
     nano \
     tmux \
     git \
+    clangd \
     python3-pip \
     python3-pydantic \
     ros-humble-joint-state-publisher \
@@ -18,7 +19,8 @@ RUN sudo apt-get update && apt-get install -y \
     ros-humble-rqt-image-view \
     ros-humble-demo-nodes-cpp \
     ros-humble-topic-tools \
-    ros-humble-joy-linux
+    ros-humble-joy-linux \
+    ros-humble-rmw-cyclonedds-cpp
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
@@ -39,5 +41,5 @@ colcon() { \n\
     esac \n\
 }' >> /root/.bashrc
 
-
 ENTRYPOINT [ "/ros_entrypoint.sh" ]
+CMD [ "/bin/bash" ]

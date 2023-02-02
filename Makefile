@@ -34,6 +34,10 @@ build-noetic:
 build-humble:
 	@docker build -f ${PWD}/ros-humble -t ros-humble .
 
+.PHONY: build-bridge
+build-bridge:
+	@docker build -f ${PWD}/ros-humble-bridge -t ros-humble-bridge .
+
 .PHONY: build-humble-jetson
 build-humble-jetson:
 	@docker build -f ${PWD}/ros-humble-jetson -t ros-humble
@@ -48,6 +52,10 @@ noetic:
 .PHONY: humble
 humble:
 	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} ros-humble bash
+
+.PHONY: bridge
+bridge:
+	@docker run -it --rm -p 9090:9090 ros-humble-bridge
 
 .PHONY: noetic_remote
 noetic_remote:

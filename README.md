@@ -21,10 +21,12 @@ The Makefile does the majority of the setup regarding mapping directories and se
 - Open powershell (windows key, "powershell")
 - Ensuring you are in `C\Users\<YourUsername>` type `notepad .wslconfig` and put the following inside:
 
+  - You can also add a `memory=` key to limit how much system memory Docker/WSL use.  (Note: Docker Desktop appears to have a huge memory leak)
 ```
 swap=24GB
 swapFile=%USERPROFILE%\AppData\Local\Temp\swap.vhdx
 ```
+
 - Run `wsl --install`
 - Install Docker Desktop
 - Open WSL Ubuntu (windows key, "ubuntu")

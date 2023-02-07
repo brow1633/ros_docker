@@ -1,5 +1,5 @@
-NOETIC_VOLUME = "${HOME}/oscar_ros_ws"
-HUMBLE_VOLUME = "${HOME}/catkin_ws"
+HUMBLE_VOLUME = "${HOME}/oscar_ros_ws"
+NOETIC_VOLUME = "${HOME}/catkin_ws"
 
 DOCKER_NOETIC_VOLUME = \
     --volume="${NOETIC_VOLUME}:/catkin_ws"

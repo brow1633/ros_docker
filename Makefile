@@ -25,7 +25,6 @@ DOCKER_ARGS = ${DOCKER_ENV_VARS} -it --net=host --pid=host --privileged --rm
 DOCKER_ARGS_LOCAL =  ${DOCKER_ARGS} ${DOCKER_X11_LOCAL} ${DOCKER_ENV_VARS_LOCAL}
 
 DOCKER_ARGS_REMOTE = ${DOCKER_ARGS} ${DOCKER_X11_REMOTE}
-
 .PHONY: build-noetic
 build-noetic:
 	@docker build -f ${PWD}/ros-noetic -t ros-noetic .
@@ -47,7 +46,7 @@ build: build-humble build-noetic
 
 .PHONY: noetic
 noetic:
-	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_NOETIC_VOLUME} ros-noetic bash
+	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_NOETIC_VOLUME} --privileged -v /dev/bus/usb:/dev/bus/usb ros-noetic bash
 
 .PHONY: humble
 humble:
@@ -73,3 +72,7 @@ jetson:
 perms:
 	@sudo chown -R ${USER} ${NOETIC_VOLUME}
 	@sudo chown -R ${USER} ${HUMBLE_VOLUME}
+
+.PHONY: ccs
+ccs:
+	@sed -i "s@/colcon_ws@${HUMBLE_VOLUME}@g" ../compile_commands.json

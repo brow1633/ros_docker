@@ -1,72 +1,42 @@
-FROM arm64v8/ros:humble-perception-jammy
+# Make an Ubuntu 22.04 Docker image supporting CUDA and Linux 4 Tegra stuff on
+# the nVidia Jetson Nano.  I ran this from the final nano Linux 4 Tegra JetPak
+# image aka jetson-nano-jp461-sd-card-image.zip which I updated to 4.6.3
+# using apt.  -- @gpshead
+#
+# Is there any real point to doing this?  I have no idea. :P
+# If you don't care about toying with the GPU stuff, just go install Armbian.
+#
+# This is based off of the instructions on
+# https://github.com/NVIDIA/nvidia-docker/wiki/NVIDIA-Container-Runtime-on-Jetson
+# and the final Jetpak 32.x container that represents the final Jetson Nano
+# platform from https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-base
+# before nvidia went ass-hole and abandoned three generations of hardware that
+# they still ship.
 
-ENV NVARCH sbsa
-ENV NVIDIA_REQUIRE_CUDA "cuda>=11.5"
-ENV NV_CUDA_CUDART_VERSION 11.5.50-1
+FROM nvcr.io/nvidia/l4t-jetpack:r35.3.1
 
-ENV DISPLAY=
-ENV QT_X11_NO_MITSHM=1
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install ubuntu-release-upgrader-core -y --no-install-recommends
+# 18.04 -> 20.04
+RUN do-release-upgrade -f DistUpgradeViewNonInteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gnupg2 curl ca-certificates && \
-    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/${NVARCH}/3bf863cc.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/${NVARCH} /" > /etc/apt/sources.list.d/cuda.list && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get clean
+RUN apt-get install -y --no-install-recommends vim
+# 20.04 -> 22.04 and IGNORE the error (which should be from usrmerge.postinstall)
+RUN do-release-upgrade -f DistUpgradeViewNonInteractive ; exit 0
+# Patch the failed convert-usrmerge to work around https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1008202
+RUN sed -i -e 's/no autodie;/rm(\"-rf\", \"$dir\");/g' -e 's/not rename/0 \&\& not rename/g' /usr/lib/usrmerge/convert-usrmerge
+# Continue the last bit do-release-upgrade failed to do? (is this really enough?)
+RUN dpkg --configure -a
+RUN apt-get remove python2 -y
+RUN apt-get autoremove -y
+RUN apt-get clean
 
-ENV CUDA_VERSION 11.5.0
+# All done here, the rest just proves that this 22.04 container supports CUDA.
+# You MUST pass the `--runtime nvidia` flag to `docker run` for CUDA to work.
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    cuda-cudart-11-5=${NV_CUDA_CUDART_VERSION} \
-    ${NV_CUDA_COMPAT_PACKAGE} \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y --no-install-recommends make g++
 
-RUN echo "/usr/local/nvidia/lib"   >> /etc/ld.so.conf.d/nvidia.conf && \
-    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
-
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-
-RUN sudo apt-get update && apt-get install -y \
-    vim \
-    nano \
-    tmux \
-    git \
-    python3-pip \
-    python3-pydantic \
-    ros-humble-joint-state-publisher \
-    ros-humble-robot-state-publisher \
-    ros-humble-plotjuggler-ros \
-    ros-humble-ros2-control \
-    ros-humble-diagnostic-updater \
-    ros-humble-diff-drive-controller \
-    ros-humble-ros2-controllers \
-    ros-humble-librealsense2 \
-    ros-humble-rqt-image-view \
-    ros-humble-demo-nodes-cpp \
-    ros-humble-topic-tools \
-    ros-humble-joy-linux
-
-ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-
-SHELL [ "/bin/bash", "-c" ]
-
-RUN echo $' \n\
-colcon() { \n\
-    case $1 in \n\
-      build) \n\
-        shift \n\
-        command colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \n\
-        ln -s build/compile_commands.json ./compile_commands.json \n\
-        ;; \n\
-      *) \n\
-        command colcon "$@";; \n\
-    esac \n\
-}' >> /root/.bashrc
-
-RUN cp /opt/ros/humble/lib/controller_manager/spawner /opt/ros/humble/lib/controller_manager/spawner.py
-
-
-ENTRYPOINT [ "/ros_entrypoint.sh" ]

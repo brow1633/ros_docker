@@ -1,0 +1,22 @@
+FROM brow1633/ros-zed-jetson:latest
+
+RUN cd ${ROS_ROOT} && \
+    git clone -b ros2 https://github.com/ros-geographic-info/geographic_info.git src/geographic_info --recurse-submodules && \
+    git clone git clone https://github.com/cra-ros-pkg/robot_localization.git src/robot_localization --recurse-submodule && \
+    git -b ros2 clone https://github.com/ros-drivers/nmea_msgs.git src/nmea_msgs && \
+    apt-get update && apt-get install -y libgeographic-dev
+    colcon build --symlink-install --base-paths src/geographic_info --merge-install --cmake-args=-DCMAKE_BUILD_TYPE=Release --parallel-workers $(nproc)
+    colcon build --symlink-install --base-paths src/robot_localization --merge-install --cmake-args=-DCMAKE_BUILD_TYPE=Release --parallel-workers $(nproc)
+    colcon build --symlink-install --base-paths src/nmea_msgs --merge-install --cmake-args=-DCMAKE_BUILD_TYPE=Release --parallel-workers $(nproc)
+
+
+RUN source ${ROS_ENVIRONMENT} && \
+    cd ${ROS_ROOT} && \
+    git clone https://github.com/stereolabs/zed-ros2-wrapper src/slam/zed-ros2-wrapper && \
+    apt-get update && \
+    #rosdep install --from-paths src/slam --ignore-src --rosdistro ${ROS_DISTRO} -y --skip-keys "rtabmap find_object_2d Pangolin libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev python-opencv python3-opencv" && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    colcon build --symlink-install --base-paths src/slam/zed-ros2-wrapper --merge-install --cmake-args=-DCMAKE_BUILD_TYPE=Release --parallel-workers $(nproc)
+
+

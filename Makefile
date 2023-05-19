@@ -25,6 +25,7 @@ DOCKER_ARGS = ${DOCKER_ENV_VARS} -it --net=host --pid=host --privileged --rm
 DOCKER_ARGS_LOCAL =  ${DOCKER_ARGS} ${DOCKER_X11_LOCAL} ${DOCKER_ENV_VARS_LOCAL}
 
 DOCKER_ARGS_REMOTE = ${DOCKER_ARGS} ${DOCKER_X11_REMOTE}
+
 .PHONY: build-noetic
 build-noetic:
 	@docker build -f ${PWD}/ros-noetic -t ros-noetic .
@@ -44,6 +45,10 @@ build-humble-jetson:
 .PHONY: build-zed-jetson
 build-zed-jetson:
 	@docker build -f ${PWD}/ros-zed-jetson -t ros-zed-jetson .
+
+.PHONY: build-zed-jetson-cross
+build-zed-jetson-cross:
+	@docker buildx build --platform linux/arm64 -f ${PWD}/ros-zed-jetson -t ros-zed-jetson .
 
 .PHONY: build
 build: build-humble build-noetic

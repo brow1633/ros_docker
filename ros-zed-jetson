@@ -1,4 +1,5 @@
-FROM nvcr.io/nvidia/l4t-cuda:11.4.19-devel
+FROM nvcr.io/nvidia/isaac/ros:aarch64-ros2_humble_c8ad2c6ecc68747eca2f1df62e25ae5e
+ARG ROS_ENVIRONMENT=${ROS_ROOT}/install/setup.bash
 
 RUN apt-get update && apt-get install -y \
     vim \
@@ -12,5 +13,27 @@ RUN apt-get update && apt-get install -y \
 RUN wget https://download.stereolabs.com/zedsdk/4.0/l4t35.3/jetsons -O zed_sdk.run \
     && chmod +x zed_sdk.run \
     && ./zed_sdk.run -- silent
+
+# zed-ros2-wrapper dependencies
+RUN source ${ROS_ENVIRONMENT} && \
+    mkdir -p /ros_ws/src/slam && \
+    cd /ros_ws && \
+    rosinstall_generator --deps --rosdistro ${ROS_DISTRO} \
+    diagnostic_updater \
+    xacro \
+    > ros2.${ROS_DISTRO}.zed.rosinstall && \
+    cat ros2.${ROS_DISTRO}.zed.rosinstall && \
+    vcs import src/slam < ros2.${ROS_DISTRO}.zed.rosinstall && \
+    apt-get update && \
+    rosdep install --from-paths src/slam --ignore-src --rosdistro ${ROS_DISTRO} -y --skip-keys "Pangolin libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev python-opencv python3-opencv" && \
+    colcon build --symlink-install --base-paths src/slam
+
+RUN source ${ROS_ENVIRONMENT} && \
+    cd /ros_ws && \
+    source install/setup.bash && \
+    git clone --recursive https://github.com/stereolabs/zed-ros2-wrapper.git  src/slam/zed-ros2-wrapper && \
+    apt-get update && \
+    rosdep install --from-paths src/slam --ignore-src --rosdistro ${ROS_DISTRO} -y --skip-keys "rtabmap find_object_2d Pangolin libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev python3-opencv python-opencv" && \
+    colcon build --symlink-install --base-paths src/slam/zed-ros2-wrapper --cmake-args=-DCMAKE_BUILD_TYPE=Release --parallel-workers=$(nproc)
 
 ENTRYPOINT [ "/bin/bash", "-c" ]

@@ -41,6 +41,10 @@ build-bridge:
 build-humble-jetson:
 	@docker build -f ${PWD}/ros-humble-jetson -t ros-humble .
 
+.PHONY: build-zed-jetson
+build-zed-jetson:
+	@docker build -f ${PWD}/ros-zed-jetson -t ros-zed-jetson .
+
 .PHONY: build
 build: build-humble build-noetic
 
@@ -67,6 +71,10 @@ humble_remote:
 .PHONY: jetson
 jetson:
 	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-humble bash
+
+.PHONY: zed-jetson
+zed-jetson:
+	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-zed-jetson bash
 
 .PHONY: perms
 perms:

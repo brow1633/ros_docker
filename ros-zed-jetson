@@ -1,0 +1,16 @@
+FROM nvcr.io/nvidia/l4t-cuda:11.4.19-devel
+
+RUN apt-get update && apt-get install -y \
+    vim \
+    nano \
+    tmux \
+    git \
+    python3-pip \
+    wget \
+    zstd
+
+RUN wget https://download.stereolabs.com/zedsdk/4.0/l4t35.3/jetsons -O zed_sdk.run \
+    && chmod +x zed_sdk.run \
+    && ./zed_sdk.run -- silent
+
+ENTRYPOINT [ "/bin/bash", "-c" ]

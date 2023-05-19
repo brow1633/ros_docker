@@ -46,6 +46,10 @@ build-humble-jetson:
 build-zed-jetson:
 	@docker build -f ${PWD}/ros-zed-jetson -t ros-zed-jetson .
 
+.PHONY: build-zed-jetson-final
+build-zed-jetson-final:
+	@docker build -f ${PWD}/ros-zed-jetson-final -t ros-zed-jetson-final .
+
 .PHONY: build-zed-jetson-cross
 build-zed-jetson-cross:
 	@docker buildx build --platform linux/arm64 -f ${PWD}/ros-zed-jetson -t ros-zed-jetson .
@@ -79,7 +83,7 @@ jetson:
 
 .PHONY: zed-jetson
 zed-jetson:
-	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-zed-jetson bash
+	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-zed-jetson-final bash
 
 .PHONY: perms
 perms:

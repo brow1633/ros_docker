@@ -25,6 +25,7 @@ RUN sudo apt-get update && apt-get install -y \
     ros-humble-tf2-* \
     ros-humble-robot-localization \
     ros-humble-ublox \
+    ros-humble-rmw-cyclonedds-cpp \
     ros-humble-joy-linux
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp

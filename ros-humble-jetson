@@ -24,7 +24,7 @@ RUN sudo apt-get update && apt-get install -y \
     ros-humble-xacro \
     ros-humble-tf2-* \
     ros-humble-robot-localization \
-    ros-humble-ublox \
+    ros-humble-septentrio-gnss-driver \
     ros-humble-rmw-cyclonedds-cpp \
     ros-humble-joy-linux
 

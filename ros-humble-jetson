@@ -26,7 +26,11 @@ RUN sudo apt-get update && apt-get install -y \
     ros-humble-robot-localization \
     ros-humble-septentrio-gnss-driver \
     ros-humble-rmw-cyclonedds-cpp \
-    ros-humble-joy-linux
+    ros-humble-joy-linux \
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-twist-mux
+
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 

@@ -79,11 +79,11 @@ humble_remote:
 
 .PHONY: jetson
 jetson:
-	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-humble bash
+	@docker run ${DOCKER_ARGS_REMOTE} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-humble bash
 
 .PHONY: zed-jetson
 zed-jetson:
-	@docker run ${DOCKER_ARGS_LOCAL} ${DOCKER_HUMBLE_VOLUME} --runtime nvidia ros-zed-jetson-final bash
+	@docker run ${DOCKER_ARGS_REMOTE} ${DOCKER_HUMBLE_VOLUME} -v /dev/bus/usb:/dev/bus/usb --runtime nvidia ros-zed-jetson-final bash
 
 .PHONY: perms
 perms:

@@ -24,7 +24,10 @@ RUN sudo apt-get update && apt-get install -y \
     ros-humble-demo-nodes-cpp \
     ros-humble-topic-tools \
     ros-humble-joy-linux \
-    ros-humble-rmw-cyclonedds-cpp
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-twist-mux
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
